@@ -406,7 +406,7 @@ class MyBot(BaseBot):
             print(f"capacity check error: {e}")
 
         if user.username == "9.__":
-            await self.highrise.chat("👑 دخل ملك الروم تاج راسكم 9.__ ")
+            await self.highrise.chat("نورت الروم سيدي،تحت امرك يامولاي👑")
         else:
             welcomes = [
                 f" أهلاً وسهلاً {user.username} نورت الروم ",
