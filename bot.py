@@ -314,10 +314,10 @@ bot_stats = {
     "start_time": time.time(),
     "online": False,
     "user_count": 0,
-    "positions": {},  # username -> {x, y, z, facing, ts}
+    "positions": {},
 }
 
-ROOM_ID = "696db8cb135ecd6d9ecf77e6"
+ROOM_ID = "6894bd39e3e4a405517cb530"
 BOT_NAME = "9.__"
 
 
@@ -346,7 +346,6 @@ class MyBot(BaseBot):
             try:
                 room_users = await self.highrise.get_room_users()
                 bot_stats["user_count"] = len(room_users.content)
-                # Update positions for all users in room
                 for u, pos in room_users.content:
                     if hasattr(pos, 'x'):
                         bot_stats["positions"][u.username] = {
@@ -718,7 +717,6 @@ async def handle_health(request):
 
 async def handle_positions(request):
     now = time.time()
-    # Only return positions updated in the last 5 minutes
     active = {
         username: pos
         for username, pos in bot_stats["positions"].items()
@@ -745,11 +743,11 @@ async def run_http_server():
     print(f"HTTP server running on port {port}")
 
 
-API_TOKEN = os.environ["HIGHRISE_API_TOKEN"]
+# تعيين التوكن الذي أرسلته مباشرةً
+API_TOKEN = "0c41fd9bfa0152c988140599a21ceee14a8763af45807fb9f6ad5299a2ac36e4"
 
 
 async def run_bot_with_retry():
-    # Wait for any old deployment session to expire before connecting
     startup_delay = 45
     print(f"Waiting {startup_delay}s for old sessions to expire...")
     await asyncio.sleep(startup_delay)
@@ -778,18 +776,16 @@ async def self_ping():
     domains = os.environ.get("REPLIT_DOMAINS", "")
     domain = domains.split(",")[0].strip() if domains else ""
     if not domain:
-        print("self_ping: no REPLIT_DOMAINS, skipping")
         return
     url = f"https://{domain}/api/healthz"
-    print(f"self_ping: will ping {url} every 4 min")
     while True:
         try:
             import aiohttp as _aiohttp
             async with _aiohttp.ClientSession() as session:
                 async with session.get(url, timeout=_aiohttp.ClientTimeout(total=10)) as r:
-                    print(f"self_ping: {r.status}")
-        except Exception as e:
-            print(f"self_ping error: {e}")
+                    pass
+        except Exception:
+            pass
         await asyncio.sleep(240)
 
 
